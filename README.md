@@ -1,5 +1,8 @@
 ## Task Tracker CLI
 
+> [!IMPORTANT]
+> I'm going to rewrite this as I didn't see the constraints of the project.
+
 This is a simple Task Tracker CLI made using commander.js. It is based on the [roadmap.sh](https://roadmap.sh/projects/task-tracker) project.
 
 ### Preview
