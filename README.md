@@ -38,8 +38,10 @@ This is a simple Task Tracker CLI made using commander.js. It is based on the [r
 -   Clone this repository
 -   Run `pnpm install` or if you don't have pnpm installed, run `npm install` or `yarn install` instead.
 -   Run `pnpm prisma db push` or if you don't have pnpm installed, run `npx prisma db push`
-    > [!NOTE]  
-    > You need to change the [schema.prisma](./prisma/schema.prisma) first if you are planning to use
-    > other database.
+
+> [!NOTE]  
+> You need to change the [schema.prisma](./prisma/schema.prisma) first if you are planning to use
+> other database.
+
 -   Run npm link
 -   Run `task-cli`
