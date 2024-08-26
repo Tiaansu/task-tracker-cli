@@ -1,9 +1,9 @@
 ## Task Tracker CLI
 
-> [!IMPORTANT]
-> I'm going to rewrite this as I didn't see the constraints of the project.
+> [!NOTE]  
+> Image and the actual output here will be different as I rewritten it with no external libraries.
 
-This is a simple Task Tracker CLI made using commander.js. It is based on the [roadmap.sh](https://roadmap.sh/projects/task-tracker) project.
+This is a simple Task Tracker CLI made using node.js. It is based on the [roadmap.sh](https://roadmap.sh/projects/task-tracker) project.
 
 ### Preview
 
@@ -30,21 +30,9 @@ This is a simple Task Tracker CLI made using commander.js. It is based on the [r
    ![task-cli list in-progress](./images/task-cli-list-in-progress.png)
    ![task-cli list done](./images/task-cli-list-done.png)
 
-### Prerequisites
-
-    - MySQL database (you can change it to any database you want. You are free to do so.)
-    - Node.JS
-    - pnpm (optional, you can just use npm or yarn)
-
-### Installation & Steps to run
+### Installation
 
 -   Clone this repository
--   Run `pnpm install` or if you don't have pnpm installed, run `npm install` or `yarn install` instead.
--   Run `pnpm prisma db push` or if you don't have pnpm installed, run `npx prisma db push`
-
-> [!NOTE]  
-> You need to change the [schema.prisma](./prisma/schema.prisma) first if you are planning to use
-> other database.
-
--   Run npm link
+-   Run `pnpm install` or your package manager's install command.
+-   Run `npm link`
 -   Run `task-cli`

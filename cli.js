@@ -1,61 +1,200 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
 
-import { red } from 'colorette';
-import { Argument, Command } from 'commander';
-import addCommand from './commands/add.js';
-import updateCommand from './commands/update.js';
-import deleteCommand from './commands/delete.js';
-import markInProgressCommand from './commands/mark-in-progress.js';
-import markDoneCommand from './commands/mark-done.js';
-import listCommand from './commands/list.js';
+const store = './store.json';
 
-const program = new Command();
+if (!fs.existsSync(store)) {
+    fs.writeFileSync(store, JSON.stringify([]));
+}
 
-program
-    .name('task-cli')
-    .description('A simple Task Tracker CLI')
-    .version('1.0.0');
+let todos = JSON.parse(fs.readFileSync(store, 'utf-8'));
 
-program
-    .command('add')
-    .addArgument(new Argument('<task>', 'The task you want to insert.'))
-    .action(addCommand);
+const saveTodo = () => {
+    fs.writeFileSync(store, JSON.stringify(todos, null, 4));
+};
 
-program
-    .command('update')
-    .addArgument(new Argument('<id>', 'The task id.'))
-    .addArgument(new Argument('<title>', 'The new task title.'))
-    .description('Update a task based on its id.')
-    .action(updateCommand);
+function main() {
+    const allowedStatus = ['todo', 'in-progress', 'done'];
 
-program
-    .command('delete')
-    .addArgument(new Argument('<id>', 'The task id you want to delete.'))
-    .description('Delete task.')
-    .action(deleteCommand);
+    const parseArguments = () => {
+        const args = process.argv.slice(2);
+        const command = args[0];
+        const options = args.slice(1);
 
-program
-    .command('mark-in-progress')
-    .addArgument(
-        new Argument('<id>', 'The task id you want to mark as in progress.')
-    )
-    .description('Mark task as in-progress.')
-    .action(markInProgressCommand);
+        return { command, options };
+    };
 
-program
-    .command('mark-done')
-    .addArgument(new Argument('<id>', 'The task id you want to mark as done.'))
-    .description('Mark task as done.')
-    .action(markDoneCommand);
+    const executeCommand = (command, options) => {
+        switch (command) {
+            case 'add':
+                addCommand(options.join(' '));
+                break;
+            case 'update':
+                updateCommand(parseInt(options[0]), options.slice(1).join(' '));
+                break;
+            case 'delete':
+                deleteCommand(parseInt(options[0]));
+                break;
+            case 'mark-in-progress':
+                markInProgressCommand(parseInt(options[0]));
+                break;
+            case 'mark-done':
+                markDoneCommand(parseInt(options[0]));
+                break;
+            case 'list':
+                listCommand(options.join(' '));
+                break;
+            default: {
+                if (!command) {
+                    console.log(`add                Add a task.`);
+                    console.log(`update             Update a task.`);
+                    console.log(`delete             Delete a task.`);
+                    console.log(`mark-in-progress   Mark task as in-progress.`);
+                    console.log(`mark-done          Mark task as done.`);
+                    console.log(
+                        `list               List a task based on the option. Allowed options: ${allowedStatus.join(
+                            ', '
+                        )}`
+                    );
+                    return;
+                }
 
-program
-    .command('list [option]')
-    .addArgument(new Argument('[option]'))
-    .description('List all tasks or tasks based on the option.')
-    .action(listCommand);
+                console.error(`Invalid command ${command}.`);
+            }
+        }
+    };
 
-program.configureOutput({
-    outputError: (str, write) => write(red(str)),
-});
+    const { command, options } = parseArguments();
+    executeCommand(command, options);
 
-program.parse(process.argv);
+    function addCommand(task) {
+        try {
+            if (!task.length) {
+                return console.error(`USAGE: task-cli add [title]`);
+            }
+
+            const newTodo = {
+                id: todos.length + 1,
+                description: task,
+                status: 'todo',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            console.log(`Task added successfully (ID: ${newTodo.id})`);
+
+            todos.push(newTodo);
+            saveTodo();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function updateCommand(id, newTitle) {
+        try {
+            if (!id || !newTitle.length) {
+                return console.error('USAGE: task-cli update [id] [new title]');
+            }
+
+            const index = todos.findIndex((todo) => todo.id === id);
+
+            if (index === -1) {
+                return console.error('The task id you entered is invalid.');
+            }
+
+            todos[index].description = newTitle;
+            console.log(`Task (ID: ${id}) updated successfully.`);
+            saveTodo();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function deleteCommand(id) {
+        try {
+            if (!id) {
+                return console.error('USAGE: task-cli delete [id]');
+            }
+
+            const index = todos.findIndex((todo) => todo.id === id);
+
+            if (index === -1) {
+                return console.error('The task id you entered is invalid.');
+            }
+
+            todos.splice(index, 1);
+            console.log(`Task (ID: ${id}) deleted successfully.`);
+            saveTodo();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function markInProgressCommand(id) {
+        try {
+            if (!id) {
+                return console.error('USAGE: task-cli mark-in-progress [id]');
+            }
+
+            const index = todos.findIndex((todo) => todo.id === id);
+
+            if (index === -1) {
+                return console.error('The task id you entered is invalid.');
+            }
+
+            todos[index].status = 'in-progress';
+            console.log(`Task (ID: ${id}) marked as in-progress successfully.`);
+            saveTodo();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function markDoneCommand(id) {
+        try {
+            if (!id) {
+                return console.error('USAGE: task-cli mark-done [id]');
+            }
+
+            const index = todos.findIndex((todo) => todo.id === id);
+
+            if (index === -1) {
+                return console.error('The task id you entered is invalid.');
+            }
+
+            todos[index].status = 'done';
+            console.log(`Task (ID: ${id}) marked as done successfully.`);
+            saveTodo();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function listCommand(option) {
+        try {
+            if (!allowedStatus.includes(option)) {
+                return console.error('Invalid option.');
+            }
+
+            const tasks = option
+                ? todos.filter((todo) => todo.status === option)
+                : todos;
+
+            if (!!!tasks.length) {
+                return console.error(
+                    `There is no task${
+                        option ? ' with that option' : ''
+                    } found.`
+                );
+            }
+
+            for (const task of tasks) {
+                console.log(`${task.id}. ${task.description} - ${task.status}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}
+
+main();

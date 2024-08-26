@@ -12,14 +12,5 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@prisma/client": "^5.18.0",
-        "ascii-table3": "^0.9.0",
-        "colorette": "^2.0.20",
-        "commander": "^12.1.0"
-    },
-    "devDependencies": {
-        "prisma": "^5.18.0"
-    }
+    "license": "ISC"
 }
