@@ -103,6 +103,7 @@ function main() {
             }
 
             todos[index].description = newTitle;
+            todos[index].updatedAt = new Date();
             console.log(`Task (ID: ${id}) updated successfully.`);
             saveTodo();
         } catch (error) {
@@ -143,6 +144,7 @@ function main() {
             }
 
             todos[index].status = 'in-progress';
+            todos[index].updatedAt = new Date();
             console.log(`Task (ID: ${id}) marked as in-progress successfully.`);
             saveTodo();
         } catch (error) {
@@ -163,6 +165,7 @@ function main() {
             }
 
             todos[index].status = 'done';
+            todos[index].updatedAt = new Date();
             console.log(`Task (ID: ${id}) marked as done successfully.`);
             saveTodo();
         } catch (error) {
